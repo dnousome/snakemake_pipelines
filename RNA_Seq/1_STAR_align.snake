@@ -1,0 +1,24 @@
+configfile:
+    "config.json"
+
+SAMPLES, = glob_wildcards(config['data']+"Raw/"+"{sample}_1.fastq.gz")
+
+rule all:
+    input:
+        expand("/home/dnousome/Documents/Aldrin/RNA-seq/{sample}/Aligned.sortedByCoord.out.bam",sample=SAMPLES)
+
+rule quant:
+    input:
+      f1='/home/dnousome/Documents/Aldrin/RNA-seq/Raw/{sample}_1.fastq.gz',
+      f2='/home/dnousome/Documents/Aldrin/RNA-seq/Raw/{sample}_2.fastq.gz'
+    output:
+        "/home/dnousome/Documents/Aldrin/RNA-seq/{sample}/Aligned.sortedByCoord.out.bam"
+    params:
+        genomedir = "/home/dnousome/dn/Annotations/star_hg38/",
+        tempsamp= '/home/dnousome/Documents/Aldrin/RNA-seq/STAR/{sample}'
+    threads: 18
+    shell:
+        """
+        STAR --runThreadN {threads} --genomeDir {params.genomedir} --readFilesIn {input.f1} {input.f2} --outSAMtype BAM SortedByCoordinate --twopassMode Basic --readFilesCommand zcat  --outFileNamePrefix {params.tempsamp}
+        touch {output}
+        """

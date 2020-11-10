@@ -1,0 +1,24 @@
+configfile:
+    "config.json"
+
+SAMPLES, = glob_wildcards(config['data']+"Raw/"+"{sample}_1.fastq.gz")
+
+rule all:
+    input:
+        expand("/home/dnousome/Documents/Aldrin/RNA-seq/kallisto_quant/{sample}/abundance.tsv",sample=SAMPLES)
+
+rule quant:
+    input:
+      f1='/home/dnousome/Documents/Aldrin/RNA-seq/Raw/{sample}_1.fastq.gz',
+      f2='/home/dnousome/Documents/Aldrin/RNA-seq/Raw/{sample}_2.fastq.gz'
+    output:
+        "/home/dnousome/Documents/Aldrin/RNA-seq/kallisto_quant/{sample}/abundance.tsv"
+    params:
+        ref = config['kallistoindex'],
+        tempout= "/home/dnousome/Documents/Aldrin/RNA-seq/kallisto_quant/{sample}"
+    threads: 18
+    shell:
+        """
+        kallisto quant {input.f1} {input.f2} -i {params.ref} -o {params.tempout} -t {threads}
+        touch {output}
+        """

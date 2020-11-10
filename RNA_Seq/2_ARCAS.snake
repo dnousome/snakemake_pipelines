@@ -1,0 +1,27 @@
+
+##
+
+##Download the hla.dat and hla_nom(_g_p).txt fromhttps://github.com/ANHIG/IMGTHLA
+configfile:
+    "config.json"
+
+SAMPLES, = glob_wildcards(config['data']+"Raw/"+"{sample}_1.fastq.gz")
+
+rule all:
+    input:
+        expand("/home/dnousome/Documents/Aldrin/RNA-seq/arcas/{sample}/{sample}.genotype.json",sample=SAMPLES)
+
+rule quant:
+    input:
+      f1='/home/dnousome/Documents/Aldrin/RNA-seq/Raw/{sample}_1.fastq.gz',
+      f2='/home/dnousome/Documents/Aldrin/RNA-seq/Raw/{sample}_2.fastq.gz'
+    output:
+        "/home/dnousome/Documents/Aldrin/RNA-seq/arcas/{sample}/{sample}.genotype.json"
+    params:
+        tempout="/home/dnousome/Documents/Aldrin/RNA-seq/arcas/{sample}"
+    threads: 18
+    shell:
+        """
+        /home/dnousome/Programs/arcasHLA/arcasHLA genotype {input} -v -o {params.tempout} -t {threads}
+        touch {output}
+        """
