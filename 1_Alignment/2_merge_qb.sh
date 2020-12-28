@@ -1,0 +1,6 @@
+#!/bin/bash
+samtools merge /home/dnousome/Documents/Armstrong/Scratch/QB/SA35801.prg.aligned.bam /home/dnousome/Documents/Armstrong/Scratch/QB/SH5518_SA35801_S41_L001.aligned.bam /home/dnousome/Documents/Armstrong/Scratch/QB/SH5518_SA35801_S41_L002.aligned.bam -@ 18
+samtools merge /home/dnousome/Documents/Armstrong/Scratch/QB/SA35803.prg.aligned.bam /home/dnousome/Documents/Armstrong/Scratch/QB/SH5518_SA35803_S42_L001.aligned.bam /home/dnousome/Documents/Armstrong/Scratch/QB/SH5518_SA35803_S42_L002.aligned.bam -@ 18
+samtools merge /home/dnousome/Documents/Armstrong/Scratch/QB/SA35804.prg.aligned.bam /home/dnousome/Documents/Armstrong/Scratch/QB/SH5518_SA35804_S43_L001.aligned.bam /home/dnousome/Documents/Armstrong/Scratch/QB/SH5518_SA35804_S43_L002.aligned.bam -@ 18
+samtools merge /home/dnousome/Documents/Armstrong/Scratch/QB/SA35815.prg.aligned.bam /home/dnousome/Documents/Armstrong/Scratch/QB/SH5518_SA35815_S44_L001.aligned.bam /home/dnousome/Documents/Armstrong/Scratch/QB/SH5518_SA35815_S44_L002.aligned.bam -@ 18
+samtools merge /home/dnousome/Documents/Armstrong/Scratch/QB/SA35818.prg.aligned.bam /home/dnousome/Documents/Armstrong/Scratch/QB/SH5518_SA35818_S45_L001.aligned.bam /home/dnousome/Documents/Armstrong/Scratch/QB/SH5518_SA35818_S45_L002.aligned.bam -@ 18

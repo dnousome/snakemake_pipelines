@@ -1,0 +1,21 @@
+configfile:
+    "config.json"
+
+SAMPLES, = glob_wildcards(config['dtexport']+"/Scratch/TAGC/{sample}.aligned.bam")
+
+rule all:
+    input:
+        expand(config['dtexport']+"/MD/TAGC/{sample}.md.bam",zip,sample=SAMPLES)
+
+rule gatk4_md:
+    input:
+        config['dtexport']+"/Scratch/TAGC/{sample}.aligned.bam"
+    output:
+        config['dtexport']+"/MD/TAGC/{sample}.md.bam"
+    conda:
+        'gatk4.yml'
+    threads: 18
+    shell:
+        """
+        gatk MarkDuplicatesSpark -I {input} -O {output} --spark-master local[{threads}] --tmp-dir /home/dnousome/Documents/Armstrong/temp
+        """

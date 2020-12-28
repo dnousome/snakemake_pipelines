@@ -1,0 +1,23 @@
+configfile:
+    "config.json"
+
+SAMPLES, = glob_wildcards(config['tagdata']+"/{sample}_R1_001.fastq.gz")
+
+rule all:
+    input:
+        expand(config['dtexport']+"/{sample}.aligned.bam",sample=SAMPLES)
+
+rule align_sort_rn:
+    input:
+        config['tagdata']+"/{sample}_R1_001.fastq.gz",
+        config['tagdata']+"/{sample}_R2_001.fastq.gz"
+    output:
+        config['dtexport']+"/{sample}.aligned.bam"
+    params:
+        rg = "@RG\\tID:{sample}\\tPL:ILLUMINA\\tSM:{sample}",
+        ref = config['bwa2index']
+    threads: 18
+    shell:
+        """
+        ~/Programs/bwa-mem2/bwa-mem2 mem -R '{params.rg}' -M {params.ref} -t {threads} {input} | samtools view -hb -@ {threads} -o {output} -
+        """

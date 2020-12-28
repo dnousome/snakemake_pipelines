@@ -1,0 +1,11 @@
+{
+  "data": "/home/dnousome/Documents/Aldrin/APOLLO3/WES/QB",
+  "tagdata": "/home/dnousome/Documents/Aldrin/APOLLO3/WES/TAGC",
+  "dtexport":"/home/dnousome/Documents/Armstrong",
+  "bwa2index": "/home/dnousome/dn/Annotations/bwamem2/ucsc_hg38.bwa2",
+  "hgfa": "/home/dnousome/dn/Annotations/ucsc_hg38/GCA_000001405.15_GRCh38_full_analysis_set.fna",
+  "dbsnp138" : "/home/dnousome/dn/Annotations/vcfs/resources_broad_hg38_v0_Homo_sapiens_assembly38.dbsnp138.vcf",
+  "hapmap": "/home/dnousome/dn/Annotations/vcfs/resources_broad_hg38_v0_hapmap_3.3.hg38.vcf.gz",
+  "illuminaInt": "/home/dnousome/dn/Annotations/illumina/nextera_hg38_1.bed",
+  "gnomadvcf":"/home/dnousome/dn/Annotations/vcfs/somatic-hg38_af-only-gnomad.hg38.vcf.gz",
+}

@@ -1,0 +1,42 @@
+configfile:
+    "config.json"
+
+SAMPLES, = glob_wildcards(config['dtexport']+"/MD/{sample}.md.bam")
+
+rule all:
+    input:
+        expand(config['dtexport']+"/RECAL/{sample}.brecal.bam",zip,sample=SAMPLES)
+
+
+rule gatk4_brecal:
+    input:
+        config['dtexport']+"/MD/{sample}.md.bam"
+    output:
+        config['dtexport']+"/RECAL/{sample}.brecal"
+    conda:
+        'gatk4.yml'
+    params:
+        hgfa = config['hgfa'],
+        dbsnp138 = config['dbsnp138'],
+        hapmap= config['hapmap'],
+        illuminaInt= config['illuminaInt'],
+    shell:
+        """
+        gatk BaseRecalibrator -I {input} -O {output} -R {params.hgfa} --known-sites {params.dbsnp138} --known-sites {params.hapmap} -L {params.illuminaInt} --tmp-dir /home/dnousome/Documents/Armstrong/temp
+        """
+        
+
+rule gatk4_rq:
+    input:
+        config['dtexport']+"/RECAL/{sample}.brecal"
+    output:
+        config['dtexport']+"/RECAL/{sample}.brecal.bam"
+    conda:
+        'gatk4.yml'
+    params:
+        hgfa = config['hgfa'],
+        bam = config['dtexport']+"/MD/{sample}.md.bam"
+    shell:
+        """
+        gatk ApplyBQSR -I {params.bam} -O {output} -R {params.hgfa} --bqsr-recal-file {input} --tmp-dir /home/dnousome/Documents/Armstrong/temp
+        """
