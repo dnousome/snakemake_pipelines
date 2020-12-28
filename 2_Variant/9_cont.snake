@@ -1,0 +1,60 @@
+configfile: "config.yaml"
+
+SAMPLES,TUM= glob_wildcards("/home/dnousome/Documents/Armstrong/FINALBAM/{sample}.{tum}.bam")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Armstrong/mutect/ro_{sample}.tar.gz',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/pileups/{sample}.cont.table',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/mutect/filtered_{sample}.vcf.gz',sample=SAMPLES)
+
+
+rule calc_f1:
+    input:
+      '/home/dnousome/Documents/Armstrong/mutect/f1_{sample}.tar.gz'
+    output:
+      '/home/dnousome/Documents/Armstrong/mutect/ro_{sample}.tar.gz'
+    conda:
+      'gatk4.yml'
+    log: "ro_{sample}.log"
+    resources: 
+      mem_mb=1600
+    shell:
+        """
+        gatk --java-options "-Xmx16G" LearnReadOrientationModel -I {input} -O {output} --tmp-dir ~/Documents/Armstrong/temp 2>{log}
+        """
+
+rule calc_contam:
+    input:
+      norm='/home/dnousome/Documents/Armstrong/pileups/{sample}.norm.pileups.table',
+      tum='/home/dnousome/Documents/Armstrong/pileups/{sample}.tum.pileups.table'
+    output:
+      '/home/dnousome/Documents/Armstrong/pileups/{sample}.cont.table'
+    conda:
+      'gatk4.yml'
+    log: "cont_{sample}.log"
+    resources: 
+      mem_mb=1600
+    shell:
+        """
+        gatk --java-options "-Xmx16G" CalculateContamination -I {input.tum} -matched {input.norm} -O {output} --tmp-dir ~/Documents/Armstrong/temp 2>{log}
+        """
+        
+rule filter_calls:
+    input:
+      vcf='/home/dnousome/Documents/Armstrong/mutect/{sample}.vcf.gz',
+      ro='/home/dnousome/Documents/Armstrong/mutect/ro_{sample}.tar.gz',
+      cont='/home/dnousome/Documents/Armstrong/pileups/{sample}.cont.table'
+    output:
+      '/home/dnousome/Documents/Armstrong/mutect/filtered_{sample}.vcf.gz'
+    conda:
+      'gatk4.yml'
+    params:
+        hgfa = config['hgfa'],
+    log: "filter_{sample}.log"
+    resources: 
+      mem_mb=1600
+    shell:
+        """
+        gatk --java-options "-Xmx16G" FilterMutectCalls -R {params.hgfa} -V {input.vcf} --contamination-table {input.cont} -O {output} --ob-priors {input.ro} --tmp-dir ~/Documents/Armstrong/temp 2>{log}
+        """

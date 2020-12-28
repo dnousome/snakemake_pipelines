@@ -1,0 +1,85 @@
+configfile: "config.yaml"
+
+SAMPLES,TUM,= glob_wildcards("/home/dnousome/Documents/Armstrong/2_RECAL_BAM/{sample}.{tum}.bam")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/{sample}.vcf.gz',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/ro_{sample}.tar.gz',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/{sample}.cont.table',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/filtered_{sample}.vcf.gz',sample=SAMPLES)
+
+
+
+rule mutect_pon_only:
+    input:
+      tum='/home/dnousome/Documents/Armstrong/2_RECAL_BAM/{sample}.tum.bam',
+    output:
+      mutout='/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/{sample}.vcf.gz',
+      f1='/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/f1_{sample}.tar.gz'
+    conda:
+      'gatk4.yml'
+    params:
+        hgfa = config['hgfa'],
+        illuminaInt= config['illuminaInt'],
+        gnomadvcf= config['gnomadvcf'],
+        pon= config['pon'],
+    log: "mutect_pon_{sample}.log"
+    shell:
+        """
+        gatk Mutect2 -R {params.hgfa} -I {input.tum} --panel-of-normals {params.pon} --germline-resource {params.gnomadvcf} --f1r2-tar-gz {output.f1} -O {output.mutout} -L {params.illuminaInt} --tmp-dir ~/Documents/Armstrong/temp 2>{log}
+        """
+        
+
+rule calc_f1_PON:
+    input:
+      '/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/f1_{sample}.tar.gz'
+    output:
+      '/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/ro_{sample}.tar.gz'
+    conda:
+      'gatk4.yml'
+    log: "ro_{sample}.log"
+    resources: 
+      mem_mb=1600
+    shell:
+        """
+        gatk --java-options "-Xmx16G" LearnReadOrientationModel -I {input} -O {output} --tmp-dir ~/Documents/Armstrong/temp 2>{log}
+        """
+
+
+rule calc_contam_PON:
+    input:
+      tum='/home/dnousome/Documents/Armstrong/3_mutect/pileups/{sample}.tum.pileups.table'
+    output:
+      '/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/{sample}.cont.table'
+    conda:
+      'gatk4.yml'
+    log: "cont_{sample}.log"
+    resources: 
+      mem_mb=1600
+    shell:
+        """
+        gatk --java-options "-Xmx16G" CalculateContamination -I {input.tum} -O {output} --tmp-dir ~/Documents/Armstrong/temp 2>{log}
+        """
+
+    
+rule filter_calls_PON:
+    input:
+      vcf='/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/{sample}.vcf.gz',
+      ro='/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/ro_{sample}.tar.gz',
+      cont='/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/{sample}.cont.table'
+    output:
+      '/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/filtered_{sample}.vcf.gz'
+    conda:
+      'gatk4.yml'
+    params:
+        hgfa = config['hgfa'],
+    log: "filter_{sample}.log"
+    resources: 
+      mem_mb=1600
+    shell:
+        """
+        gatk --java-options "-Xmx16G" FilterMutectCalls -R {params.hgfa} -V {input.vcf} --contamination-table {input.cont} -O {output} --ob-priors {input.ro} --tmp-dir ~/Documents/Armstrong/temp 2>{log}
+        """
+
+

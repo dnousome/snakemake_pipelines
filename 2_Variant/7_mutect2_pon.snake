@@ -1,0 +1,35 @@
+configfile: "config.yaml"
+
+SAMPLES,TUM,= glob_wildcards("/home/dnousome/Documents/Armstrong/2_RECAL_BAM/{sample}.{tum}.bam")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/{sample}.vcf.gz',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/f1_{sample}.tar.gz',sample=SAMPLES),
+
+
+
+rule mutect_pon_only:
+    input:
+      tum='/home/dnousome/Documents/Armstrong/2_RECAL_BAM/{sample}.tum.bam',
+    output:
+      mutout='/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/{sample}.vcf.gz',
+      f1='/home/dnousome/Documents/Armstrong/3_mutect/1_mutect_PONonly/f1_{sample}.tar.gz'
+    conda:
+      'gatk4.yml'
+    params:
+        hgfa = config['hgfa'],
+        illuminaInt= config['illuminaInt'],
+        gnomadvcf= config['gnomadvcf'],
+        pon= config['pon'],
+    log: "mutect_pon_{sample}.log"
+    shell:
+        """
+        gatk Mutect2 -R {params.hgfa} -I {input.tum} --panel-of-normals {params.pon} --germline-resource {params.gnomadvcf} --f1r2-tar-gz {output.f1} -O {output.mutout} -L {params.illuminaInt} --tmp-dir ~/Documents/Armstrong/temp 2>{log}
+
+        """
+        
+#Run Additional file due to missing matching normal
+#gatk Mutect2 -R /home/dnousome/dn/Annotations/ucsc_hg38/GCA_000001405.15_GRCh38_full_analysis_set.fna -I /home/dnousome/Documents/Armstrong/FINALBAM/SH5527_FT-SA35807_S114_L003-1.tum.bam --panel-of-normals /home/dnousome/Documents/Aldrin/APOLLO3/WES/2_Variant/pon.vcf.gz -normal SH5527_FT-SA35807_S114_L003 --germline-resource /home/dnousome/dn/Annotations/vcfs/somatic-hg38_af-only-gnomad.hg38.vcf.gz --f1r2-tar-gz /home/dnousome/Documents/Armstrong/mutect/f1_SH5527_FT-SA35807_S114_L003-1.tar.gz -O /home/dnousome/Documents/Armstrong/mutect/SH5527_FT-SA35807_S114_L003-1.vcf.gz --tmp-dir ~/Documents/Armstrong/temp 2>SH5527_FT-SA35807_S114_L003-1.log
+
+

@@ -1,0 +1,21 @@
+configfile: "config.yaml"
+
+SAMPLES,= glob_wildcards("/home/dnousome/Documents/Armstrong/BAM_MD/{sample}.bam")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Aldrin/APOLLO3/WES/4_analysis/Coverage/{sample}.mosdepth.summary.txt',sample=SAMPLES),
+
+rule cov:
+    input:
+      "/home/dnousome/Documents/Armstrong/BAM_MD/{sample}.bam"
+    output:
+      '/home/dnousome/Documents/Aldrin/APOLLO3/WES/4_analysis/Coverage/{sample}.mosdepth.summary.txt'
+    params:
+      int=config["illuminaInt"],
+      outname='/home/dnousome/Documents/Aldrin/APOLLO3/WES/4_analysis/Coverage/{sample}'
+    threads: 2
+    shell:
+        """
+      mosdepth -n --by {params.int} {params.outname} {input} -t {threads}
+        """

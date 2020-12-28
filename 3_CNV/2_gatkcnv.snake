@@ -1,0 +1,140 @@
+configfile: "config.yaml"
+
+SAMPLES,TUM= glob_wildcards("/home/dnousome/Documents/Armstrong/4_CNV/hdf5/{sample}.{tum}.counts.hdf5")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Armstrong/4_CNV/hdf5_norm/{sample}.pon.hdf5',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/4_CNV/sc_ratio_pon/{sample}.standardizedCR.tsv',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/4_CNV/dn_ratio_pon/{sample}.denoisedCR.tsv',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/4_CNV/sc_ratio_matched/{sample}.standardizedCR.tsv',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/4_CNV/dn_ratio_matched/{sample}.denoisedCR.tsv',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/4_CNV/seg_matched/{sample}_matched.cr.seg',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/4_CNV/seg_pon/{sample}_pon.cr.seg',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/4_CNV/cleaned/{sample}_pon_cleaned.cr.seg',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/4_CNV/cleaned/{sample}_matched_cleaned.cr.seg',sample=SAMPLES)
+
+
+
+
+###For all the norms recreate the readcount PON (using single sample)
+rule cnv_denoise:
+    input:
+      norm='/home/dnousome/Documents/Armstrong/4_CNV/hdf5/{sample}.norm.counts.hdf5'
+    output:
+      '/home/dnousome/Documents/Armstrong/4_CNV/hdf5_norm/{sample}.pon.hdf5',
+    conda:
+      'gatk4.yml'
+    resources: 
+      mem_mb=1600
+    params:
+    log: "cnv_pon_{sample}.log"
+    shell:
+        """
+        gatk --java-options -Xmx12g CreateReadCountPanelOfNormals -I {input.norm} --minimum-interval-median-percentile 5.0 -O {output}
+        """
+        
+
+rule cnv_denoise_pon:
+    input:
+      tum='/home/dnousome/Documents/Armstrong/4_CNV/hdf5/{sample}.tum.counts.hdf5',
+      norm='/home/dnousome/Documents/Armstrong/4_CNV/hdf5/{sample}.norm.counts.hdf5'
+    output:
+      sCR='/home/dnousome/Documents/Armstrong/4_CNV/sc_ratio_pon/{sample}.standardizedCR.tsv',
+      dCR='/home/dnousome/Documents/Armstrong/4_CNV/dn_ratio_pon/{sample}.denoisedCR.tsv'
+    conda:
+      'gatk4.yml'
+    resources: 
+      mem_mb=1600
+    params:
+    log: "cnv_pon_{sample}.log"
+    shell:
+        """
+        gatk --java-options "-Xmx16g" DenoiseReadCounts -I {input.tum} --count-panel-of-normals /home/dnousome/Documents/Armstrong/4_CNV/cnvponC.pon.hdf5 --standardized-copy-ratios {output.sCR} --denoised-copy-ratios {output.dCR} --tmp-dir ~/Documents/Armstrong/temp 2>{log}
+        """
+        
+        
+rule cnv_denoise_matched:
+    input:
+      tum='/home/dnousome/Documents/Armstrong/4_CNV/hdf5/{sample}.tum.counts.hdf5',
+      norm='/home/dnousome/Documents/Armstrong/4_CNV/hdf5_norm/{sample}.pon.hdf5'
+    output:
+      sCR='/home/dnousome/Documents/Armstrong/4_CNV/sc_ratio_matched/{sample}.standardizedCR.tsv',
+      dCR='/home/dnousome/Documents/Armstrong/4_CNV/dn_ratio_matched/{sample}.denoisedCR.tsv'
+    conda:
+      'gatk4.yml'
+    resources: 
+      mem_mb=1600
+    params:
+    log: "cnv_matched_{sample}.log"
+    shell:
+        """
+        gatk --java-options "-Xmx16g" DenoiseReadCounts -I {input.tum} --count-panel-of-normals {input.norm} --standardized-copy-ratios {output.sCR} --denoised-copy-ratios {output.dCR} --tmp-dir ~/Documents/Armstrong/temp 2>{log}
+        """
+        
+rule modelsegments_pon:
+    input:
+      dCR='/home/dnousome/Documents/Armstrong/4_CNV/dn_ratio_pon/{sample}.denoisedCR.tsv',
+      tum='/home/dnousome/Documents/Armstrong/4_CNV/ac/{sample}.tum.alleliccounts.tsv',
+      norm='/home/dnousome/Documents/Armstrong/4_CNV/ac/{sample}.norm.alleliccounts.tsv',
+    output:
+      '/home/dnousome/Documents/Armstrong/4_CNV/seg_pon/{sample}_pon.cr.seg',
+    conda:
+      'gatk4.yml'
+    resources: 
+      mem_mb=1600
+    params:
+      sample_name='{sample}_pon',
+      sample_dir='/home/dnousome/Documents/Armstrong/4_CNV/seg_pon/'
+    log: "cnv_seg_pon_{sample}.log"
+    shell:
+        """
+        gatk --java-options "-Xmx4g" ModelSegments --denoised-copy-ratios {input.dCR} --allelic-counts {input.tum} --normal-allelic-counts {input.norm} --output {params.sample_dir} --output-prefix {params.sample_name}
+        """
+
+rule modelsegments_matched:
+    input:
+      dCR='/home/dnousome/Documents/Armstrong/4_CNV/dn_ratio_matched/{sample}.denoisedCR.tsv',
+      tum='/home/dnousome/Documents/Armstrong/4_CNV/ac/{sample}.tum.alleliccounts.tsv',
+      norm='/home/dnousome/Documents/Armstrong/4_CNV/ac/{sample}.norm.alleliccounts.tsv',
+    output:
+      '/home/dnousome/Documents/Armstrong/4_CNV/seg_matched/{sample}_matched.cr.seg',
+    conda:
+      'gatk4.yml'
+    resources: 
+      mem_mb=1600
+    params:
+      sample_name='{sample}_matched',
+      sample_dir='/home/dnousome/Documents/Armstrong/4_CNV/seg_matched/'
+    log: "cnv_seg_matched_{sample}.log"
+    shell:
+        """
+        gatk --java-options "-Xmx4g" ModelSegments --denoised-copy-ratios {input.dCR} --allelic-counts {input.tum} --normal-allelic-counts {input.norm} --output {params.sample_dir} --output-prefix {params.sample_name}
+        """
+
+rule callcr_pon:
+    input:
+      pon='/home/dnousome/Documents/Armstrong/4_CNV/seg_pon/{sample}_pon.cr.seg',
+    output:
+      '/home/dnousome/Documents/Armstrong/4_CNV/cleaned/{sample}_pon_cleaned.cr.seg',
+    conda:
+      'gatk4.yml'
+    resources: 
+      mem_mb=1600
+    shell:
+        """
+        gatk CallCopyRatioSegments --input {input} --output {output}
+        """
+rule callcr_m:
+    input:
+      pon='/home/dnousome/Documents/Armstrong/4_CNV/seg_matched/{sample}_matched.cr.seg',
+    output:
+      '/home/dnousome/Documents/Armstrong/4_CNV/cleaned/{sample}_matched_cleaned.cr.seg'
+    conda:
+      'gatk4.yml'
+    resources: 
+      mem_mb=1600
+    shell:
+        """
+        gatk CallCopyRatioSegments --input {input} --output {output}
+        """

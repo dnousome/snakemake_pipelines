@@ -1,0 +1,20 @@
+configfile: "config.yaml"
+
+SAMPLES,= glob_wildcards("/home/dnousome/Documents/Armstrong/strelka/strelka_{sample}/results/variants/somatic.snvs.vcf.gz")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Armstrong/strelka/anno/anno_{sample}.vcf.gz',sample=SAMPLES),
+
+rule annotate:
+    input:
+      "/home/dnousome/Documents/Armstrong/strelka/strelka_{sample}/results/variants/somatic.snvs.vcf.gz"
+    output:
+      '/home/dnousome/Documents/Armstrong/strelka/anno/anno_{sample}.vcf.gz'
+    params:
+      clinvar='/home/dnousome/dn/Annotations/vcfs/clinvar.vcf.gz'
+    shell:
+        """
+    snpEff -Xmx8g -noStats GRCh38.86 {input} |SnpSift annotate {params.clinvar} - |bgzip >{output}
+    tabix {output}
+        """

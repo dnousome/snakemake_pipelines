@@ -1,0 +1,26 @@
+configfile: "config.yaml"
+
+SAMPLES,= glob_wildcards("/home/dnousome/Documents/Armstrong/3_strelka/strelka_{sample}/results/variants/somatic.snvs.vcf.gz")
+
+rule target:
+    input: 
+        expand('/home/dnousome/Documents/Armstrong/3_strelka/annovar/anno_{sample}.hg38_multianno.txt',sample=SAMPLES),
+
+
+rule annotate:
+    input:
+      "/home/dnousome/Documents/Armstrong/3_strelka/strelka_{sample}/results/variants/somatic.snvs.vcf.gz"
+    output:
+        '/home/dnousome/Documents/Armstrong/3_strelka/annovar/anno_{sample}.hg38_multianno.txt'
+    params:
+        temp1="/home/dnousome/Documents/Armstrong/3_strelka/annovar/anno_{sample}_temp1.vcf",
+        temp2="/home/dnousome/Documents/Armstrong/3_strelka/annovar/anno_{sample}_temp2.vcf",
+        pref='/home/dnousome/Documents/Armstrong/3_strelka/annovar/anno_{sample}'
+    shell:
+        """
+    bcftools view -f "PASS" {input} -Ov -o {params.temp1}
+    /home/dnousome/dn/Programs/annovar/convert2annovar.pl {params.temp1} -format vcf4old -includeinfo -outfile {params.temp2}
+    /home/dnousome/dn/Programs/annovar/table_annovar.pl {params.temp2} ~/dn/Programs/annovar/humandb/ -buildver hg38 -out {params.pref} -remove -protocol refGene,clinvar_20190305 -operation g,f -otherinfo -nastring NA
+    rm {params.temp1} {params.temp2}
+    touch {output}
+        """

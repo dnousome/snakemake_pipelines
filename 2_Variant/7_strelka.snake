@@ -1,0 +1,51 @@
+configfile: "config.yaml"
+
+SAMPLES,TUM,= glob_wildcards("/home/dnousome/Documents/Armstrong/BAM_MD/{sample}.{tum}.bam")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Armstrong/strelka/manta_{sample}/results/variants/candidateSmallIndels.vcf.gz',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/strelka/strelka_{sample}/results/complete.txt',sample=SAMPLES)
+
+rule manta:
+    input:
+      tum='/home/dnousome/Documents/Armstrong/BAM_MD/{sample}.tum.bam',
+      norm='/home/dnousome/Documents/Armstrong/BAM_MD/{sample}.norm.bam'
+    output:
+      '/home/dnousome/Documents/Armstrong/strelka/manta_{sample}/results/variants/candidateSmallIndels.vcf.gz'
+    conda:
+      'py2.yml'
+    params:
+        hgfa = config['hgfa'],
+        mantaOutdir='/home/dnousome/Documents/Armstrong/strelka/manta_{sample}/',
+        prefix="candidateSmallIndels.vcf.gz",
+    threads: 4
+    shell:
+        """
+        configManta.py --exome --tumorBam {input.tum} --normalBam {input.norm} --referenceFasta {params.hgfa} --runDir {params.mantaOutdir} 
+        {params.mantaOutdir}runWorkflow.py -m local -j {threads}
+        """
+
+
+rule strelka:
+    input:
+      tum='/home/dnousome/Documents/Armstrong/BAM_MD/{sample}.tum.bam',
+      norm='/home/dnousome/Documents/Armstrong/BAM_MD/{sample}.norm.bam',
+      manta="/home/dnousome/Documents/Armstrong/strelka/manta_{sample}/results/variants/candidateSmallIndels.vcf.gz"
+    output:
+      '/home/dnousome/Documents/Armstrong/strelka/strelka_{sample}/results/complete.txt'
+    conda:
+      'py2.yml'
+    params:
+        hgfa = config['hgfa'],
+        strelkaOutdir='/home/dnousome/Documents/Armstrong/strelka/strelka_{sample}/',
+        prefix="somatic.snvs.vcf.gz",
+        illuminaIntbedgz= config['illuminaIntbedgz'],
+    threads: 4
+    shell:
+        """
+        configureStrelkaSomaticWorkflow.py --exome --tumorBam {input.tum} --normalBam {input.norm} --referenceFasta {params.hgfa} --indelCandidates {input.manta} --callRegions {params.illuminaIntbedgz} --runDir {params.strelkaOutdir} 
+        {params.strelkaOutdir}runWorkflow.py -m local -j {threads}
+        touch {output}
+        """
+        

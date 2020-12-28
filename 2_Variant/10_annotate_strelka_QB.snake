@@ -1,0 +1,23 @@
+configfile: "config.yaml"
+
+SAMPLES,= glob_wildcards("/home/dnousome/Documents/Aldrin/APOLLO3/WES/Alignment_QB/QD602_somatic_vcf/hg38/{sample}.somatic.hg38.vcf")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Aldrin/APOLLO3/WES/Alignment_QB/QD602_somatic_vcf/hg38/anno_{sample}.hg38_multianno.txt',sample=SAMPLES),
+
+rule annotate:
+    input:
+      "/home/dnousome/Documents/Aldrin/APOLLO3/WES/Alignment_QB/QD602_somatic_vcf/hg38/{sample}.somatic.hg38.vcf"
+    output:
+      '/home/dnousome/Documents/Aldrin/APOLLO3/WES/Alignment_QB/QD602_somatic_vcf/hg38/anno_{sample}.hg38_multianno.txt'
+    params:
+      temp1="/home/dnousome/Documents/Aldrin/APOLLO3/WES/Alignment_QB/QD602_somatic_vcf/hg38/anno_{sample}.temp1.vcf",
+      pref='/home/dnousome/Documents/Aldrin/APOLLO3/WES/Alignment_QB/QD602_somatic_vcf/hg38/anno_{sample}'
+    shell:
+        """
+    /home/dnousome/dn/Programs/annovar/convert2annovar.pl {input} -format vcf4old -includeinfo -outfile {params.temp1}
+    /home/dnousome/dn/Programs/annovar/table_annovar.pl {params.temp1} --buildver hg38 /home/dnousome/dn/Programs/annovar/humandb/ -remove --protocol refGene,clinvar_20190305 --operation g,f --outfile {params.pref} -otherinfo -nastring NA
+    rm {params.temp1}
+    touch {output}
+        """

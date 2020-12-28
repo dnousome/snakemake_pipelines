@@ -1,0 +1,43 @@
+configfile: "config.yaml"
+
+SAMPLES,= glob_wildcards("/home/dnousome/Documents/Armstrong/2_RECAL_BAM/{sample}.bam")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Armstrong/4_CNV/hdf5/{sample}.counts.hdf5',sample=SAMPLES),
+      expand('/home/dnousome/Documents/Armstrong/4_CNV/ac/{sample}.alleliccounts.tsv',sample=SAMPLES),
+
+rule cnv_gatk:
+    input:
+      '/home/dnousome/Documents/Armstrong/2_RECAL_BAM/{sample}.bam',
+    output:
+      '/home/dnousome/Documents/Armstrong/4_CNV/hdf5/{sample}.counts.hdf5',
+    conda:
+      'gatk4.yml'
+    params:
+        hgfa = config['hgfa'],
+        cnvint= "/home/dnousome/dn/Annotations/illumina/cnv_hg38.interval_list"
+    log: "cnv1_{sample}.log"
+    shell:
+        """
+        gatk CollectReadCounts -I {input} -L {params.cnvint} --interval-merging-rule OVERLAPPING_ONLY -O {output} --tmp-dir ~/Documents/Armstrong/temp 2>{log}
+        """
+      
+
+rule cnv_allelic_counts:
+    input:
+      tum='/home/dnousome/Documents/Armstrong/2_RECAL_BAM/{sample}.bam',
+    output:
+      '/home/dnousome/Documents/Armstrong/4_CNV/ac/{sample}.alleliccounts.tsv',
+    conda:
+      'gatk4.yml'
+    resources: 
+      mem_mb=2000
+    params:
+        hgfa = config['hgfa'],
+        cnvint= "/home/dnousome/dn/Annotations/illumina/cnv_hg38.interval_list"
+    log: "cnv2_{sample}.log"
+    shell:
+        """
+        gatk --java-options "-Xmx20G" CollectAllelicCounts -I {input} -L /home/dnousome/dn/Annotations/vcfs/somatic-hg38_small_exac_common_3.hg38.vcf.gz -O {output} -R {params.hgfa} --tmp-dir ~/Documents/Armstrong/temp 2>{log}
+        """

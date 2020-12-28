@@ -1,0 +1,41 @@
+configfile:
+    "config.yaml"
+
+SAMPLES, = glob_wildcards(config['dtexport']+"/RECAL/{sample}.brecal.bam")
+
+rule all:
+    input:
+        expand(config['dtexport']+"/PON/{sample}.PON_rehead.vcf.gz",zip,sample=SAMPLES)
+
+rule gatk4_pon:
+    input:
+        config['dtexport']+"/RECAL/{sample}.brecal.bam"
+    output:
+        config['dtexport']+"/PON/{sample}.PON.vcf.gz"
+    conda:
+        'gatk4.yml'
+    params:
+        hgfa = config['hgfa'],
+        illuminaInt= config['illuminaInt'],
+        gnomadvcf= config['gnomadvcf']
+    shell:
+        """
+        gatk Mutect2 --germline-resource {params.gnomadvcf} -L {params.illuminaInt} -R {params.hgfa} -I {input} -max-mnp-distance 0 -O {output} --tmp-dir ~/Documents/Armstrong/temp
+        """
+        
+        
+rule reheader:
+    input:
+        config['dtexport']+"/PON/{sample}.PON.vcf.gz"
+    output:
+        config['dtexport']+"/PON/{sample}.PON_rehead.vcf.gz"
+    shell:
+        """
+        bcftools view -h {input}|head -n -4 > header1
+        bcftools view -h {input}|tail -n1 > header2
+        cat header1 ~/dn/Annotations/tempheader2 header2  > newheader
+        bcftools reheader {input} -h newheader -o {output}
+        bcftools index {output} -f -t
+        """
+        
+

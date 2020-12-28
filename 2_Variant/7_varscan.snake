@@ -1,0 +1,23 @@
+configfile: "config.yaml"
+
+SAMPLES,TUM,= glob_wildcards("/home/dnousome/Documents/Armstrong/1_MD_BAM/{sample}.{tum}.bam")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Armstrong/3_varscan/{sample}.{tum}.vcf.gz',sample=SAMPLES,tum=TUM),
+
+
+rule varscan:
+    input:
+      '/home/dnousome/Documents/Armstrong/1_MD_BAM/{sample}.{tum}.bam',
+    output:
+      '/home/dnousome/Documents/Armstrong/3_varscan/{sample}.{tum}.vcf.gz',
+    params:
+        hgfa = config['hgfa'],
+    shell:
+        """
+  samtools mpileup -d 10000 -q 1 -Q 15 -A -f {params.hgfa} {input} | varscan mpileup2cns - --variants --strand-filter 0 --p-value 0.01 --min-var-freq 0.01 --output-vcf 1 |bgzip >{output}
+
+        """
+        
+

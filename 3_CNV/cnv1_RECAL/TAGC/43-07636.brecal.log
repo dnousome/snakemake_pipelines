@@ -1,0 +1,70 @@
+16:17:49.745 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/dnousome/Documents/Aldrin/APOLLO3/WES/3_CNV/.snakemake/conda/a19d1ac3/share/gatk4-4.1.4.0-1/gatk-package-4.1.4.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+Nov 04, 2019 4:17:49 PM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+16:17:49.896 INFO  CollectReadCounts - ------------------------------------------------------------
+16:17:49.897 INFO  CollectReadCounts - The Genome Analysis Toolkit (GATK) v4.1.4.0
+16:17:49.897 INFO  CollectReadCounts - For support and documentation go to https://software.broadinstitute.org/gatk/
+16:17:49.897 INFO  CollectReadCounts - Executing as dnousome@pop-os on Linux v5.3.0-20-generic amd64
+16:17:49.897 INFO  CollectReadCounts - Java runtime: OpenJDK 64-Bit Server VM v1.8.0_192-b01
+16:17:49.897 INFO  CollectReadCounts - Start Date/Time: November 4, 2019 4:17:49 PM EST
+16:17:49.897 INFO  CollectReadCounts - ------------------------------------------------------------
+16:17:49.897 INFO  CollectReadCounts - ------------------------------------------------------------
+16:17:49.898 INFO  CollectReadCounts - HTSJDK Version: 2.20.3
+16:17:49.898 INFO  CollectReadCounts - Picard Version: 2.21.1
+16:17:49.898 INFO  CollectReadCounts - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+16:17:49.898 INFO  CollectReadCounts - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+16:17:49.898 INFO  CollectReadCounts - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+16:17:49.898 INFO  CollectReadCounts - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+16:17:49.898 INFO  CollectReadCounts - Deflater: IntelDeflater
+16:17:49.898 INFO  CollectReadCounts - Inflater: IntelInflater
+16:17:49.898 INFO  CollectReadCounts - GCS max retries/reopens: 20
+16:17:49.898 INFO  CollectReadCounts - Requester pays: disabled
+16:17:49.898 INFO  CollectReadCounts - Initializing engine
+16:17:54.206 INFO  FeatureManager - Using codec IntervalListCodec to read file file:///home/dnousome/dn/Annotations/illumina/cnv_hg38.interval_list
+16:17:55.082 INFO  IntervalArgumentCollection - Processing 136104887 bp from intervals
+16:17:55.120 INFO  CollectReadCounts - Done initializing engine
+16:17:55.123 INFO  CollectReadCounts - Collecting read counts...
+16:17:55.123 INFO  ProgressMeter - Starting traversal
+16:17:55.123 INFO  ProgressMeter -        Current Locus  Elapsed Minutes       Reads Processed     Reads/Minute
+16:18:05.125 INFO  ProgressMeter -        chr2:33134438              0.2               1494000        8963103.7
+16:18:15.140 INFO  ProgressMeter -       chr3:134371104              0.3               2937000        8803956.8
+16:18:25.141 INFO  ProgressMeter -        chr4:55883815              0.5               3340000        6675994.4
+16:18:35.371 INFO  ProgressMeter -        chr5:16758149              0.7               3739000        5574080.1
+16:18:45.742 INFO  ProgressMeter -       chr5:141413293              0.8               4137000        4903692.3
+16:18:55.745 INFO  ProgressMeter -        chr6:89715697              1.0               4677000        4629012.6
+16:19:05.827 INFO  ProgressMeter -        chr7:36284657              1.2               5091000        4320264.8
+16:19:15.872 INFO  ProgressMeter -       chr7:129690480              1.3               5458000        4055530.1
+16:19:26.281 INFO  ProgressMeter -       chr8:134565121              1.5               5990000        3942605.1
+16:19:36.418 INFO  ProgressMeter -       chr9:114805798              1.7               6394000        3787353.8
+16:19:46.600 INFO  ProgressMeter -       chr10:60069378              1.9               6821000        3671283.5
+16:19:57.159 INFO  ProgressMeter -       chr11:19056077              2.0               7364000        3620571.0
+16:20:07.184 INFO  ProgressMeter -      chr11:113204323              2.2               7901000        3589731.9
+16:20:17.273 INFO  ProgressMeter -       chr12:85047398              2.4               8532000        3601291.6
+16:20:27.469 INFO  ProgressMeter -       chr14:19780399              2.5               9059000        3567799.6
+16:20:37.504 INFO  ProgressMeter -       chr15:43639684              2.7               9649000        3565318.6
+16:20:47.564 INFO  ProgressMeter -       chr16:21519931              2.9              10186000        3544189.3
+16:20:57.737 INFO  ProgressMeter -       chr17:28631895              3.0              10834000        3559659.0
+16:21:07.760 INFO  ProgressMeter -       chr18:31598591              3.2              11465000        3570965.1
+16:21:17.898 INFO  ProgressMeter -       chr19:49426391              3.4              12259000        3627370.2
+16:21:27.900 INFO  ProgressMeter -       chr22:25690156              3.5              12936000        3647779.8
+16:21:35.073 INFO  CollectReadCounts - 19505677 read(s) filtered by: ((((WellformedReadFilter AND MappedReadFilter) AND NonZeroReferenceLengthAlignmentReadFilter) AND NotDuplicateReadFilter) AND MappingQualityReadFilter)
+  17431586 read(s) filtered by: (((WellformedReadFilter AND MappedReadFilter) AND NonZeroReferenceLengthAlignmentReadFilter) AND NotDuplicateReadFilter)
+      13316 read(s) filtered by: ((WellformedReadFilter AND MappedReadFilter) AND NonZeroReferenceLengthAlignmentReadFilter)
+          13316 read(s) filtered by: (WellformedReadFilter AND MappedReadFilter)
+              13316 read(s) filtered by: MappedReadFilter 
+      17418270 read(s) filtered by: NotDuplicateReadFilter 
+  2074091 read(s) filtered by: MappingQualityReadFilter 
+
+16:21:35.073 INFO  ProgressMeter -           chrM:14515              3.7              13448352        3668566.1
+16:21:35.073 INFO  ProgressMeter - Traversal complete. Processed 13448352 total reads in 3.7 minutes.
+16:21:35.073 INFO  CollectReadCounts - Writing read counts to /home/dnousome/Documents/Armstrong/4_CNV/hdf5/RECAL/TAGC/43-07636.brecal.counts.hdf5...
+log4j:WARN No appenders could be found for logger (org.broadinstitute.hdf5.HDF5Library).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+16:21:35.547 INFO  CollectReadCounts - CollectReadCounts complete.
+16:21:35.547 INFO  CollectReadCounts - Shutting down engine
+[November 4, 2019 4:21:35 PM EST] org.broadinstitute.hellbender.tools.copynumber.CollectReadCounts done. Elapsed time: 3.76 minutes.
+Runtime.totalMemory()=2349334528
+Using GATK jar /home/dnousome/Documents/Aldrin/APOLLO3/WES/3_CNV/.snakemake/conda/a19d1ac3/share/gatk4-4.1.4.0-1/gatk-package-4.1.4.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -jar /home/dnousome/Documents/Aldrin/APOLLO3/WES/3_CNV/.snakemake/conda/a19d1ac3/share/gatk4-4.1.4.0-1/gatk-package-4.1.4.0-local.jar CollectReadCounts -I /home/dnousome/Documents/Armstrong/2_RECAL_BAM/RECAL/TAGC/43-07636.brecal.bam -L /home/dnousome/dn/Annotations/illumina/cnv_hg38.interval_list --interval-merging-rule OVERLAPPING_ONLY -O /home/dnousome/Documents/Armstrong/4_CNV/hdf5/RECAL/TAGC/43-07636.brecal.counts.hdf5 --tmp-dir /home/dnousome/Documents/Armstrong/temp

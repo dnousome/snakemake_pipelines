@@ -1,0 +1,20 @@
+configfile: "config.yaml"
+
+SAMPLES,= glob_wildcards("/home/dnousome/Documents/Armstrong/3_mutect/2_filtered/filtered_{sample}.vcf.gz")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Armstrong/3_mutect/3_anno/anno_{sample}.hg38_multianno.txt',sample=SAMPLES),
+
+rule annotate:
+    input:
+      "/home/dnousome/Documents/Armstrong/mutect/2_filtered/filtered_{sample}.vcf.gz"
+    output:
+      '/home/dnousome/Documents/Armstrong/mutect/3_anno/anno_{sample}.hg38_multianno.txt'
+    params:
+      pref='/home/dnousome/Documents/Armstrong/3_mutect/3_anno/anno_{sample}'
+    shell:
+        """
+    /home/dnousome/dn/Programs/annovar/table_annovar.pl --buildver hg38 {input} /home/dnousome/dn/Programs/annovar/humandb/ --vcfinput --protocol refGene,clinvar_20190305 --operation g,f --outfile {params.pref}
+    touch {output}
+        """

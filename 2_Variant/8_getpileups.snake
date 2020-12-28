@@ -1,0 +1,29 @@
+configfile: "config.yaml"
+
+SAMPLES,= glob_wildcards("/home/dnousome/Documents/Armstrong/FINALBAM/{sample}.bam")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Armstrong/pileups/{sample}.pileups.table',sample=SAMPLES)
+
+
+rule pileups:
+    input:
+      '/home/dnousome/Documents/Armstrong/FINALBAM/{sample}.bam'
+    output:
+      pileup='/home/dnousome/Documents/Armstrong/pileups/{sample}.pileups.table'
+    conda:
+      'gatk4.yml'
+    params:
+        hgfa = config['hgfa'],
+        illuminaInt= config['illuminaInt'],
+        gnomadvcf= config['gnomadvcf'],
+        smallgnomadvcf= config['smallgnomadvcf'],
+    log: "pileups_{sample}.log"
+    resources: 
+      mem_mb=1600
+    shell:
+        """
+        gatk --java-options "-Xmx16G" GetPileupSummaries -I {input} -V {params.smallgnomadvcf} -L {params.smallgnomadvcf} -O {output.pileup} --tmp-dir ~/Documents/Armstrong/temp 2>{log}
+        """
+        

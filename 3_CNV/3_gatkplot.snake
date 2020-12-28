@@ -1,0 +1,32 @@
+configfile: "config.yaml"
+
+SAMPLES,TUM= glob_wildcards("/home/dnousome/Documents/Armstrong/4_CNV/gatk/hdf5/{sample}.{tum}.counts.hdf5")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Armstrong/4_CNV/gatk/plots/{sample}_pon.modeled.png',sample=SAMPLES),
+
+
+
+###For all the norms recreate the readcount PON (using single sample)
+rule cnv_plot:
+    input:
+      denoised='/home/dnousome/Documents/Armstrong/4_CNV/gatk/dn_ratio_pon/{sample}.denoisedCR.tsv',
+      ac='/home/dnousome/Documents/Armstrong/4_CNV/gatk/seg_pon/{sample}_pon.hets.tsv',
+      seg='/home/dnousome/Documents/Armstrong/4_CNV/gatk/seg_pon/{sample}_pon.modelFinal.seg',
+    output:
+      '/home/dnousome/Documents/Armstrong/4_CNV/gatk/plots/{sample}_pon.modeled.png'
+    conda:
+      'gatk4.yml'
+    resources: 
+      mem_mb=1600
+    params:
+      dict="/home/dnousome/dn/Annotations/ucsc_hg38/GCA_000001405.15_GRCh38_full_analysis_set.dict",
+      name='"{sample}_pon"',
+      outputdir="/home/dnousome/Documents/Armstrong/4_CNV/gatk/plots"
+    shell:
+        """
+    gatk --java-options -Xmx12g PlotModeledSegments --denoised-copy-ratios {input.denoised} --allelic-counts {input.ac} --segments {input.seg} --sequence-dictionary {params.dict} --minimum-contig-length 46709983 --output {params.outputdir} --output-prefix {params.name}
+    touch {output}
+
+        """

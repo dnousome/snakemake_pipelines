@@ -1,0 +1,23 @@
+configfile: "config.yaml"
+
+SAMPLES,TUM= glob_wildcards("/home/dnousome/Documents/Armstrong/2_RECAL_BAM/{sample}.{tum}.bam")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Armstrong/4_CNV/facets/{sample}_pileup_cn.gz',sample=SAMPLES),
+
+rule facets:
+    input:
+      tum='/home/dnousome/Documents/Armstrong/2_RECAL_BAM/{sample}.tum.bam',
+      norm='/home/dnousome/Documents/Armstrong/2_RECAL_BAM/{sample}.norm.bam'
+    output:
+      '/home/dnousome/Documents/Armstrong/4_CNV/facets/{sample}_pileup_cn.gz',
+    resources: 
+      mem_mb=1600
+    params:
+      dbsnp="/home/dnousome/dn/Annotations/vcfs/resources_broad_hg38_v0_Homo_sapiens_assembly38.dbsnp138.vcf"
+    shell:
+        """
+        snp-pileup -g -q15 -Q20 -P100 -r25,0 {params.dbsnp} {output} {input.norm} {input.tum}
+        """
+    

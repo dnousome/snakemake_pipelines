@@ -1,0 +1,20 @@
+configfile: "config.yaml"
+
+SAMPLES,= glob_wildcards("/home/dnousome/Documents/Armstrong/mutect/2_filtered/filtered_{sample}.vcf.gz")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Armstrong/mutect/3_annosnpeff/anno_{sample}.vcf.gz',sample=SAMPLES),
+
+rule annotate:
+    input:
+      "/home/dnousome/Documents/Armstrong/mutect/2_filtered/filtered_{sample}.vcf.gz"
+    output:
+      '/home/dnousome/Documents/Armstrong/mutect/3_annosnpeff/anno_{sample}.vcf.gz'
+    params:
+      clinvar='/home/dnousome/dn/Annotations/vcfs/clinvar.vcf.gz'
+    shell:
+        """
+    snpEff -Xmx8g -noStats GRCh38.86 {input} |SnpSift annotate {params.clinvar} - |bgzip >{output}
+    tabix {output}
+        """

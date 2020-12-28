@@ -1,0 +1,40 @@
+configfile: "config.yaml"
+
+
+rule mutect_matched:
+    input:
+        tumor=config["tumor"],
+        normal=config["normal"]
+    output:
+        mutectout=config["m2matchedout"]
+    conda:
+        'gatk4.yml'
+    params:
+        hgfa = config['hgfa'],
+        illuminaInt= config['illuminaInt'],
+        gnomadvcf= config['gnomadvcf'],
+        samplename=config["samplename"]
+
+    shell:
+        """
+        gatk Mutect2 -R {params.hgfa} -I {input.tumor} -I {input.normal} -normal {params.samplename} --germline-resource {params.gnomadvcf} -O {output.mutectout} --tmp-dir ~/Documents/Armstrong/temp
+        """
+
+
+
+rule mutect_tumoronly:
+    input:
+        tumor=config["tumor"]            
+    output:
+        "SDF.vcf"
+    conda:
+        'gatk4.yml'
+    params:
+        hgfa = config['hgfa'],
+        illuminaInt= config['illuminaInt'],
+        gnomadvcf= config['gnomadvcf'],
+        samplename=config["samplename"]
+    shell:
+        """
+        gatk Mutect2 -R {params.hgfa} -I {input.tumor} --germline-resource {params.gnomadvcf} -O {output} --tmp-dir ~/Documents/Armstrong/temp
+        """

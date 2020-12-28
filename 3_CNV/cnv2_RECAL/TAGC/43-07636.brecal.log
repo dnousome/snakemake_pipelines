@@ -1,0 +1,70 @@
+16:16:43.361 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/dnousome/Documents/Aldrin/APOLLO3/WES/3_CNV/.snakemake/conda/a19d1ac3/share/gatk4-4.1.4.0-1/gatk-package-4.1.4.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+Nov 04, 2019 4:16:43 PM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+16:16:43.515 INFO  CollectAllelicCounts - ------------------------------------------------------------
+16:16:43.516 INFO  CollectAllelicCounts - The Genome Analysis Toolkit (GATK) v4.1.4.0
+16:16:43.516 INFO  CollectAllelicCounts - For support and documentation go to https://software.broadinstitute.org/gatk/
+16:16:43.516 INFO  CollectAllelicCounts - Executing as dnousome@pop-os on Linux v5.3.0-20-generic amd64
+16:16:43.516 INFO  CollectAllelicCounts - Java runtime: OpenJDK 64-Bit Server VM v1.8.0_192-b01
+16:16:43.516 INFO  CollectAllelicCounts - Start Date/Time: November 4, 2019 4:16:43 PM EST
+16:16:43.516 INFO  CollectAllelicCounts - ------------------------------------------------------------
+16:16:43.516 INFO  CollectAllelicCounts - ------------------------------------------------------------
+16:16:43.516 INFO  CollectAllelicCounts - HTSJDK Version: 2.20.3
+16:16:43.516 INFO  CollectAllelicCounts - Picard Version: 2.21.1
+16:16:43.516 INFO  CollectAllelicCounts - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+16:16:43.516 INFO  CollectAllelicCounts - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+16:16:43.516 INFO  CollectAllelicCounts - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+16:16:43.516 INFO  CollectAllelicCounts - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+16:16:43.517 INFO  CollectAllelicCounts - Deflater: IntelDeflater
+16:16:43.517 INFO  CollectAllelicCounts - Inflater: IntelInflater
+16:16:43.517 INFO  CollectAllelicCounts - GCS max retries/reopens: 20
+16:16:43.517 INFO  CollectAllelicCounts - Requester pays: disabled
+16:16:43.517 INFO  CollectAllelicCounts - Initializing engine
+16:16:45.220 INFO  FeatureManager - Using codec VCFCodec to read file file:///home/dnousome/dn/Annotations/vcfs/somatic-hg38_small_exac_common_3.hg38.vcf.gz
+16:16:45.506 INFO  IntervalArgumentCollection - Processing 59295 bp from intervals
+16:16:45.531 INFO  CollectAllelicCounts - Done initializing engine
+16:16:45.536 INFO  CollectAllelicCounts - Collecting allelic counts...
+16:16:45.536 INFO  ProgressMeter - Starting traversal
+16:16:45.537 INFO  ProgressMeter -        Current Locus  Elapsed Minutes        Loci Processed      Loci/Minute
+16:16:58.594 INFO  ProgressMeter -        chr1:43605020              0.2                  2000           9190.5
+16:17:09.167 INFO  ProgressMeter -       chr1:115684010              0.4                  3000           7617.4
+16:17:20.097 INFO  ProgressMeter -       chr1:168580184              0.6                  4000           6944.4
+16:17:33.835 INFO  ProgressMeter -        chr2:25313958              0.8                  6000           7453.7
+16:17:44.725 INFO  ProgressMeter -        chr2:95897458              1.0                  7000           7096.0
+16:18:01.510 INFO  ProgressMeter -       chr2:231226766              1.3                  9000           7107.9
+16:18:12.177 INFO  ProgressMeter -       chr3:101459004              1.4                 11000           7617.7
+16:18:22.612 INFO  ProgressMeter -        chr4:15519780              1.6                 13000           8035.0
+16:18:34.961 INFO  ProgressMeter -        chr5:13754264              1.8                 15000           8224.9
+16:18:48.250 INFO  ProgressMeter -       chr5:179032282              2.0                 17000           8312.1
+16:19:02.618 INFO  ProgressMeter -       chr6:169234915              2.3                 21000           9191.6
+16:19:13.684 INFO  ProgressMeter -       chr7:101034344              2.5                 23000           9315.1
+16:19:26.393 INFO  ProgressMeter -       chr8:142700440              2.7                 26000           9698.1
+16:19:38.370 INFO  ProgressMeter -       chr9:128927082              2.9                 28000           9720.4
+16:19:48.643 INFO  ProgressMeter -       chr10:89339873              3.1                 30000           9830.4
+16:19:59.122 INFO  ProgressMeter -       chr11:57182217              3.2                 33000          10228.1
+16:20:09.157 INFO  ProgressMeter -        chr12:5981998              3.4                 35000          10313.3
+16:20:21.725 INFO  ProgressMeter -       chr13:28700992              3.6                 38000          10546.4
+16:20:32.001 INFO  ProgressMeter -       chr14:88469910              3.8                 40000          10597.8
+16:20:43.117 INFO  ProgressMeter -        chr16:1450500              4.0                 43000          10859.5
+16:20:53.466 INFO  ProgressMeter -       chr16:84054663              4.1                 45000          10890.2
+16:21:04.312 INFO  ProgressMeter -       chr17:73401227              4.3                 48000          11129.4
+16:21:14.905 INFO  ProgressMeter -       chr19:32953605              4.5                 52000          11582.7
+16:21:27.493 INFO  ProgressMeter -       chr22:21634310              4.7                 57000          12129.6
+16:21:34.849 INFO  CollectAllelicCounts - 1094555 read(s) filtered by: ((((WellformedReadFilter AND MappedReadFilter) AND NonZeroReferenceLengthAlignmentReadFilter) AND NotDuplicateReadFilter) AND MappingQualityReadFilter)
+  971956 read(s) filtered by: (((WellformedReadFilter AND MappedReadFilter) AND NonZeroReferenceLengthAlignmentReadFilter) AND NotDuplicateReadFilter)
+      19 read(s) filtered by: ((WellformedReadFilter AND MappedReadFilter) AND NonZeroReferenceLengthAlignmentReadFilter)
+          19 read(s) filtered by: (WellformedReadFilter AND MappedReadFilter)
+              19 read(s) filtered by: MappedReadFilter 
+      971937 read(s) filtered by: NotDuplicateReadFilter 
+  122599 read(s) filtered by: MappingQualityReadFilter 
+
+16:21:34.849 INFO  ProgressMeter -       chrX:135160400              4.8                 59295          12297.1
+16:21:34.849 INFO  ProgressMeter - Traversal complete. Processed 59295 total loci in 4.8 minutes.
+16:21:34.850 INFO  CollectAllelicCounts - Writing allelic counts to /home/dnousome/Documents/Armstrong/4_CNV/ac/RECAL/TAGC/43-07636.brecal.alleliccounts.tsv...
+16:21:34.953 INFO  CollectAllelicCounts - CollectAllelicCounts complete.
+16:21:34.953 INFO  CollectAllelicCounts - Shutting down engine
+[November 4, 2019 4:21:34 PM EST] org.broadinstitute.hellbender.tools.copynumber.CollectAllelicCounts done. Elapsed time: 4.86 minutes.
+Runtime.totalMemory()=2115502080
+Using GATK jar /home/dnousome/Documents/Aldrin/APOLLO3/WES/3_CNV/.snakemake/conda/a19d1ac3/share/gatk4-4.1.4.0-1/gatk-package-4.1.4.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx16G -jar /home/dnousome/Documents/Aldrin/APOLLO3/WES/3_CNV/.snakemake/conda/a19d1ac3/share/gatk4-4.1.4.0-1/gatk-package-4.1.4.0-local.jar CollectAllelicCounts -I /home/dnousome/Documents/Armstrong/2_RECAL_BAM/RECAL/TAGC/43-07636.brecal.bam -L /home/dnousome/dn/Annotations/vcfs/somatic-hg38_small_exac_common_3.hg38.vcf.gz -O /home/dnousome/Documents/Armstrong/4_CNV/ac/RECAL/TAGC/43-07636.brecal.alleliccounts.tsv -R /home/dnousome/dn/Annotations/ucsc_hg38/GCA_000001405.15_GRCh38_full_analysis_set.fna --tmp-dir /home/dnousome/Documents/Armstrong/temp

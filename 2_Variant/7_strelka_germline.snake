@@ -1,0 +1,27 @@
+configfile: "config.yaml"
+
+SAMPLES,TUM,= glob_wildcards("/home/dnousome/Documents/Armstrong/1_MD_BAM/{sample}.{tum}.bam")
+
+rule target:
+    input: 
+      expand('/home/dnousome/Documents/Armstrong/3_strelka_germline/strelka_{sample}/results/complete.txt',sample=SAMPLES)
+
+rule strelka:
+    input:
+      norm='/home/dnousome/Documents/Armstrong/1_MD_BAM/{sample}.norm.bam'
+    output:
+      '/home/dnousome/Documents/Armstrong/3_strelka_germline/strelka_{sample}/results/complete.txt'
+    conda:
+      'py2.yml'
+    params:
+        hgfa = config['hgfa'],
+        strelkaOutdir='/home/dnousome/Documents/Armstrong/3_strelka_germline/strelka_{sample}/',
+        illuminaIntbedgz= config['illuminaIntbedgz'],
+    threads: 4
+    shell:
+        """
+        configureStrelkaGermlineWorkflow.py --exome --bam {input.norm} --referenceFasta {params.hgfa} --callRegions {params.illuminaIntbedgz} --runDir {params.strelkaOutdir} 
+        {params.strelkaOutdir}runWorkflow.py -m local -j {threads}
+        touch {output}
+        """
+        
